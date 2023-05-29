@@ -843,9 +843,11 @@ impl RenderAsset for Mesh {
         mesh: Self::ExtractedAsset,
         render_device: &mut SystemParamItem<Self::Param>,
     ) -> Result<Self::PreparedAsset, PrepareAssetError<Self::ExtractedAsset>> {
+        let extra_usages = BufferUsages::STORAGE;
+
         let vertex_buffer_data = mesh.get_vertex_buffer_data();
         let vertex_buffer = render_device.create_buffer_with_data(&BufferInitDescriptor {
-            usage: BufferUsages::VERTEX,
+            usage: BufferUsages::VERTEX | extra_usages,
             label: Some("Mesh Vertex Buffer"),
             contents: &vertex_buffer_data,
         });
@@ -856,7 +858,7 @@ impl RenderAsset for Mesh {
             },
             |data| GpuBufferInfo::Indexed {
                 buffer: render_device.create_buffer_with_data(&BufferInitDescriptor {
-                    usage: BufferUsages::INDEX,
+                    usage: BufferUsages::INDEX | extra_usages,
                     contents: data,
                     label: Some("Mesh Index Buffer"),
                 }),
